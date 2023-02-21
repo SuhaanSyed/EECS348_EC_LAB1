@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include "main.h"
+
+void read_preferences(FILE *fp, int prg[][N], int dep[][N]) {
+     // Read the preferences of the Departments
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            fscanf(fp, "%d", &dep[i][j]);
+        }
+    }
+
+    // Read the preferences of the Programmers
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            fscanf(fp, "%d", &prg[i][j]);
+        }
+    }
+}
+
+void accept(int programmer, int department, int prg[][N], int matches[][N]) {
+    int curr_dep = department;
+    for (int priority = 0; priority < N; priority++) {
+        int preferred_dept = prg[priority][programmer] - 1;
+        if (preferred_dept == curr_dep) {
+            break;
+        }
+        if (matches[programmer][preferred_dept] == 1 && preferred_dept != department) {
+            curr_dep = preferred_dept;
+            break;
+        }
+        
+        
+    }
+    matches[programmer][curr_dep] = 1;
+    for (int i = 0; i < N; i++) {
+        if (i != curr_dep) {
+            matches[programmer][i] = 0;
+        }
+    }
+
+    programmers[programmer] = true;
+    departments[curr_dep] = true;
+}
+
+void review_invitation(int prg[][N], int matches[][N]) {
+    for (int programmer = 0; programmer < N; programmer++) {
+        for (int department = 0; department < N; department++) {
+            if (matches[programmer][department] == 1 && !programmers[programmer]) {
+                accept(programmer, department, prg, matches);
+            }
+        }
+    }
+}
+
+
+
+void find_matches(int prg[][N], int dep[][N], int matches[][N]){
+    for(int i=0; i<N; i++){
+        programmers[i] = false;
+        departments[i] = false;
+    }
+
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            matches[i][j] = -1;
+        }
+    }
+
+    for(int priority=0; priority<N; priority++){
+        for(int department=0; department<N; department++){
+            int programmer = dep[priority][department] - 1;
+            if(!programmers[programmer] && !departments[department]){
+                matches[programmer][department] = 1;
+            }   
+        }
+
+        review_invitation(prg, matches);
+    }
+}
+
+
+void print_matches(int matrix[][N]) {
+
+    for(int department=0; department<N; department++){
+        for(int programmer=0; programmer<N; programmer++){
+            if(matrix[programmer][department] == 1){
+                printf("Department %d is assigned Programmer %d\n", (department+1), (programmer+1));
+            }
+        }
+    }
+}
+
+
+
+
+int main() {
+    /*
+    FILE *fp = fopen("input.txt", "r");
+    int prg[N][N], dep[N][N];
+    read_preferences(fp, prg, dep);
+    fclose(fp);
+    int matches[N][N];
+    find_matches(prg, dep, matches);
+    print_matches(matches);
+    */
+  
+
+
+    int x[5] = { 10, 20, 30 };
+    printf("%d", x[3]);
+
+
+
+
+    return 0;
+}
